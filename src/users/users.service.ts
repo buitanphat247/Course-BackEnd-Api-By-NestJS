@@ -16,29 +16,16 @@ export class UsersService {
     return hash;
   };
 
-  async create(email: string, password: string, name: string) {
-    const hash_password = this.getHashPassword(password);
+  async create(userDTO: CreateUserDto) {
+    const hash_password = this.getHashPassword(userDTO.password);
     const new_user = await this.userModel.create({
-      email,
+      name: userDTO.name,
+      email: userDTO.email,
       password: hash_password,
-      name,
     });
+
     return new_user;
   }
 
-  // findAll() {
-  //   return `This action returns all users`;
-  // }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} user`;
-  // }
-
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} user`;
-  // }
 }
