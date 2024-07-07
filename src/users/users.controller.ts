@@ -18,7 +18,6 @@ export class UsersController {
 
   @Post()
   async create(@Body() userDTO: CreateUserDto) {
-    console.log('userDTO: ', userDTO);
     return this.usersService.create(userDTO);
   }
 
@@ -31,6 +30,9 @@ export class UsersController {
   async update(@Param('id') id: string, @Body() updateUserDTO: UpdateUserDto) {
     return this.usersService.updateUser(id, updateUserDTO);
   }
-  
-  
+
+  @Delete(':id')
+  async delete(@Param('id') id: string) {
+    return this.usersService.deleteUser(id);
+  }
 }

@@ -3,8 +3,9 @@ import { HydratedDocument } from 'mongoose';
 import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
 
 export type UserDocument = HydratedDocument<User>;
+// export type UserDocument = User & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class User {
   @Prop({ required: true })
   email: string;
@@ -19,9 +20,9 @@ export class User {
   @Prop()
   address: string;
   @Prop()
-  createdAt: Date;
+  createdAt?: Date;
   @Prop()
-  updatedAt: Date;
+  updatedAt?: Date;
 }
 
 export const UserSchema =
