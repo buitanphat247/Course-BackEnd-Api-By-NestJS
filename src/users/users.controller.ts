@@ -19,8 +19,8 @@ export class UsersController {
   async create(@Body() userDTO: CreateUserDto) {
     return this.usersService.create(userDTO);
   }
-  @Get()
-  async get() {
-    return 'this.usersService.getUser()';
+  @Get(':id')
+  async getUserById(@Param('id') id: string) {
+    return this.usersService.getUserById(id);
   }
 }
