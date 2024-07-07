@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { genSaltSync, hashSync } from 'bcryptjs';
+import { genSaltSync, hashSync, compareSync } from 'bcryptjs';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './schemas/user.schema';
@@ -30,13 +30,27 @@ export class UsersService {
     return new_user;
   }
 
-  async getUserById(id: string) {
+  async findAll() {
+    return await this.userModel.find({});
+  }
+
+  async findOne(id: string) {
     const user_id = await this.userModel.findById(id);
     return user_id;
   }
 
+  async findOneByUsername(username: string) {
+    return await this.userModel.findOne({
+      email: username,
+    });
+  }
+
+  checkPassword(password: string, hash_password: string) {
+    return compareSync(password, hash_password);
+  }
+
   async updateUser(id: string, updateUserDTO: UpdateUserDto) {
-    const user_id = await this.getUserById(id);
+    const user_id = await this.findOne(id);
     user_id.email = updateUserDTO.email;
     user_id.name = updateUserDTO.name;
     const filter = { _id: id };
