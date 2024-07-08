@@ -1,6 +1,6 @@
 import { IsString, IsInt, IsNotEmpty } from 'class-validator';
 
-export class CreateCompanyDTO {
+export class CreateCompanyDto {
   @IsNotEmpty()
   name: string;
   @IsNotEmpty()

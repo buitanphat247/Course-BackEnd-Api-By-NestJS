@@ -9,7 +9,7 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const reflector = app.get(Reflector);
-  // app.useGlobalGuards(new JwtAuthGuard(reflector));
+  app.useGlobalGuards(new JwtAuthGuard(reflector));
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   // console.log('>>> views: ', join(__dirname, '..', 'views'));
