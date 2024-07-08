@@ -7,9 +7,9 @@ export type UserDocument = HydratedDocument<User>;
 
 @Schema({ timestamps: true })
 export class User {
-  @Prop({ required: true })
+  @Prop()
   email: string;
-  @Prop({ required: true })
+  @Prop()
   password: string;
   @Prop()
   name: string;
@@ -19,10 +19,16 @@ export class User {
   age: number;
   @Prop()
   address: string;
+  //***************************/
   @Prop()
   createdAt?: Date;
   @Prop()
   updatedAt?: Date;
+  @Prop()
+  deleteAt?: Date;
+  //***************************/
+  @Prop()
+  isDeleted?: boolean;
 }
 
 export const UserSchema =
