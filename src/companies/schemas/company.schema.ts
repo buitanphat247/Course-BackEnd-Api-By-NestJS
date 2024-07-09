@@ -17,9 +17,9 @@ export class Company {
   @Prop()
   createdAt?: Date;
   @Prop()
-  updateAt?: Date;
+  updatedAt?: Date;
   @Prop()
-  deleteAt?: Date;
+  deletedAt?: Date;
   //***************************/
   @Prop()
   isDeleted?: boolean;
@@ -30,12 +30,12 @@ export class Company {
     email: string;
   };
   @Prop({ type: Object })
-  updateBy: {
+  updatedBy: {
     _id:  mongoose.Schema.Types.ObjectId;
     email: string;
   };
   @Prop({ type: Object })
-  deleteBy: {
+  deletedBy: {
     _id:  mongoose.Schema.Types.ObjectId;
     email: string;
   };

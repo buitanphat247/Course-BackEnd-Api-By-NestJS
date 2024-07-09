@@ -1,24 +1,53 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
+  Req,
   Patch,
   Param,
   Delete,
-  UseGuards,
+  Get,
+  Query,
 } from '@nestjs/common';
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
+import { User } from 'src/decorator/customize';
+import { UserInterface } from 'src/users/users.interface';
 import { UpdateCompanyDto } from './dto/update-company.dto';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('companies')
 export class CompaniesController {
   constructor(private readonly companiesService: CompaniesService) {}
 
+  @Get()
+  get(
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+    @Query() query: any,
+  ) {
+    return this.companiesService.searchQuery(page, limit, query);
+  }
+
   @Post()
-  create(@Body() createCompanyDto: CreateCompanyDto) {
-    return this.companiesService.create(createCompanyDto);
+  create(
+    @Body() createCompanyDto: CreateCompanyDto,
+    @User() user: UserInterface,
+  ) {
+    return this.companiesService.create(createCompanyDto, user);
+  }
+
+  @Patch(':id')
+  update(
+    @Body() updateCompanyDto: UpdateCompanyDto,
+    @Param('id') id: string,
+    @User() user: UserInterface,
+  ) {
+    // console.log('id: ', id);
+    return this.companiesService.update(updateCompanyDto, id, user);
+  }
+
+  @Delete(':id')
+  delete(@Param('id') id: string, @User() user: UserInterface) {
+    return this.companiesService.delete(id, user);
   }
 }
