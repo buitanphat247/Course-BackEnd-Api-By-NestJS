@@ -34,11 +34,8 @@ export class CompaniesService {
       sort,
       projection,
       population,
-    }: { filter: any; sort: any; projection: any; population: any } = aqp(query); // const transformQuery = this.objectSlugToNormal(query);
-    console.log('population: ', population);
-    console.log('projection: ', projection);
-    console.log('sort: ', sort);
-    console.log('filter: ', filter);
+    }: { filter: any; sort: any; projection: any; population: any } =
+      aqp(query);
     const result_all = await this.companyModel.find(filter);
     const result_query = await this.companyModel
       .find(filter)

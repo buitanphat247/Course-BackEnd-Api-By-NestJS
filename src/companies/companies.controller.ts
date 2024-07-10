@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
-import { User } from 'src/decorator/customize';
+import { ResponseMessage, User } from 'src/decorator/customize';
 import { UserInterface } from 'src/users/users.interface';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 
@@ -20,6 +20,7 @@ export class CompaniesController {
   constructor(private readonly companiesService: CompaniesService) {}
 
   @Get()
+  @ResponseMessage('Fetched Stats Succesfully')
   get(
     @Query('page') page: number,
     @Query('limit') limit: number,
