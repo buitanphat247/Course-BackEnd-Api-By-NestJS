@@ -17,7 +17,7 @@ import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { UserInterface } from 'src/users/users.interface';
 
-@Controller('auths')
+@Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,

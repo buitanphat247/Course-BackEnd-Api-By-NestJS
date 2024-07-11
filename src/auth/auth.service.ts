@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import ms from 'ms';
 
@@ -136,7 +136,7 @@ export class AuthService {
         };
       }
     } catch (err) {
-      throw new Error('Refresh token is invalid. Please login again.');
+      throw new BadRequestException('Refresh token is invalid. Please login.');
     }
   }
 

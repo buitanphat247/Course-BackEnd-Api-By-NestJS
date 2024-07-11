@@ -38,7 +38,6 @@ export class UsersService {
       population,
     }: { filter: any; sort: any; projection: any; population: any } =
       aqp(query);
-    console.log('filter: ', filter);
     const result_all = await this.userModel.find(filter);
     const result_query = await this.userModel
       .find(filter)
