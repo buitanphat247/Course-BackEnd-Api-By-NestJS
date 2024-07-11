@@ -26,9 +26,9 @@ export class CompaniesService {
     }
     return transformedObj;
   }
-  async searchQuery(page: number, limit: number, query: any) {
-    delete query.page;
-    delete query.limit;
+  async searchQuery(currentPage: number, limit: number, query: any) {
+    delete query.current;
+    delete query.pageSize;
     const {
       filter,
       sort,
@@ -40,19 +40,22 @@ export class CompaniesService {
     const result_query = await this.companyModel
       .find(filter)
       .limit(limit)
-      .skip((page - 1) * limit)
+      .skip((currentPage - 1) * limit)
       .sort(sort)
       .select(projection)
       .populate(population)
       .exec();
     return {
-      meta: {
-        current: page,
-        limit: limit,
-        totalPages: Math.ceil(result_all.length / limit),
-        totalItems: result_query.length,
+      message: 'Get comppany is success',
+      result: {
+        meta: {
+          current: currentPage,
+          limit: limit,
+          totalPages: Math.ceil(result_all.length / limit),
+          totalItems: result_query.length,
+        },
+        result: result_query,
       },
-      result: result_query,
     };
   }
 

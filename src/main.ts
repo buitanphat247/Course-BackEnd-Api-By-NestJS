@@ -4,18 +4,17 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
-import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { JwtAuthGuard } from './auth/guard/jwt-auth.guard';
 import { TransformInterceptor } from './core/transform.interceptor';
-
+import cookieParser from 'cookie-parser';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const reflector = app.get(Reflector);
+  const configService = app.get(ConfigService);
+  app.use(cookieParser());
   app.useGlobalGuards(new JwtAuthGuard(reflector));
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
-  // console.log('>>> views: ', join(__dirname, '..', 'views'));
-  // console.log('>>> public: ', join(__dirname, '..', 'public'));
-  const configService = app.get(ConfigService);
   app.setViewEngine('ejs');
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalInterceptors(new TransformInterceptor());

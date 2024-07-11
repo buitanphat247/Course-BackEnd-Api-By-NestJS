@@ -22,11 +22,11 @@ export class CompaniesController {
   @Get()
   @ResponseMessage('Fetched Stats Succesfully')
   get(
-    @Query('page') page: number,
-    @Query('limit') limit: number,
+    @Query('current') currentPage: number,
+    @Query('pageSize') limit: number,
     @Query() query: any,
   ) {
-    return this.companiesService.searchQuery(page, limit, query);
+    return this.companiesService.searchQuery(currentPage, limit, query);
   }
 
   @Post()

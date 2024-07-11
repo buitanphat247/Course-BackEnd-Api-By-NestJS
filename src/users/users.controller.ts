@@ -31,15 +31,11 @@ export class UsersController {
   @Get()
   @ResponseMessage('Fetched Stats Succesfully')
   async getUserWithPaginate(
-    @Query('page') page: number,
-    @Query('limit') limit: number,
+    @Query('current') currentPage: number,
+    @Query('pageSize') limit: number,
     @Query() query: any,
   ) {
-    const result = await this.usersService.searchQuery(page, limit, query);
-    return {
-      message: `Get user in page ${page} is success`,
-      result,
-    };
+    return await this.usersService.searchQuery(currentPage, limit, query);
   }
 
   @ResponseMessage('Register a new user')

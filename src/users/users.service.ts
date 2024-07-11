@@ -22,12 +22,15 @@ export class UsersService {
   };
 
   async getUserById(id: string) {
-    return await this.userModel.findById(id).exec();
+    return {
+      message: 'Get infor account is success',
+      result: await this.userModel.findById(id).exec(),
+    };
   }
 
-  async searchQuery(page: number, limit: number, query: any) {
-    delete query.page;
-    delete query.limit;
+  async searchQuery(currentPage: number, limit: number, query: any) {
+    delete query.current;
+    delete query.pageSize;
     const {
       filter,
       sort,
@@ -35,23 +38,27 @@ export class UsersService {
       population,
     }: { filter: any; sort: any; projection: any; population: any } =
       aqp(query);
+    console.log('filter: ', filter);
     const result_all = await this.userModel.find(filter);
     const result_query = await this.userModel
       .find(filter)
       .limit(limit)
-      .skip((page - 1) * limit)
+      .skip((currentPage - 1) * limit)
       .sort(sort)
       .select(projection)
       .populate(population)
       .exec();
     return {
-      meta: {
-        current: page,
-        limit: limit,
-        totalPages: Math.ceil(result_all.length / limit),
-        totalItems: result_query.length,
+      message: 'Get user is success',
+      result: {
+        meta: {
+          current: currentPage,
+          limit: limit,
+          totalPages: Math.ceil(result_all.length / limit),
+          totalItems: result_query.length,
+        },
+        result: result_query,
       },
-      result: result_query,
     };
   }
 
@@ -129,6 +136,23 @@ export class UsersService {
     });
   }
 
+  async updateRefreshToken(refresh_token: string, id: string) {
+    const result = await this.userModel.findOneAndUpdate(
+      { _id: id },
+      {
+        refreshToken: refresh_token,
+      },
+    );
+    return result;
+  }
+
+  async geUserByToken(token: string) {
+    return await this.userModel.findOne({ refreshToken: token });
+  }
+
+  async updateUserByToken(token: string, data: any) {
+    return await this.userModel.findOneAndUpdate({ refreshToken: token }, data);
+  }
   checkPassword(password: string, hash_password: string) {
     return compareSync(password, hash_password);
   }
