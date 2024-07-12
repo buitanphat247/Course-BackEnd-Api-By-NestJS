@@ -2,19 +2,35 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
 
-export type CompanyDocument = HydratedDocument<Company>;
-// export type CompanyDocument = Company & Document;
+export type JobDocument = HydratedDocument<Job>;
+// export type UserDocument = User & Document;
 
 @Schema({ timestamps: true })
-export class Company {
+export class Job {
   @Prop()
-  name: string;
+  name?: string;
+  @Prop({ type: [String] })
+  skills: string[];
+  @Prop({ type: Object })
+  company: {
+    _id: mongoose.Schema.Types.ObjectId;
+    name: string;
+    logo: string;
+  };
   @Prop()
-  address: string;
+  salary: number;
+  @Prop()
+  location: string;
+  @Prop()
+  quantity: string;
+  @Prop()
+  level: string;
   @Prop()
   description: string;
   @Prop()
-  logo: string;
+  startDate: Date;
+  @Prop()
+  endDate: Date;
   //***************************/
   @Prop()
   createdAt?: Date;
@@ -25,23 +41,25 @@ export class Company {
   //***************************/
   @Prop()
   isDeleted?: boolean;
+  @Prop()
+  isActive?: boolean;
   //***************************/
   @Prop({ type: Object })
-  createdBy: {
+  createdBy?: {
     _id: mongoose.Schema.Types.ObjectId;
     email: string;
   };
   @Prop({ type: Object })
-  updatedBy: {
+  updatedBy?: {
     _id: mongoose.Schema.Types.ObjectId;
     email: string;
   };
   @Prop({ type: Object })
-  deletedBy: {
+  deletedBy?: {
     _id: mongoose.Schema.Types.ObjectId;
     email: string;
   };
 }
 
-export const CompanySchema =
-  SchemaFactory.createForClass(Company).plugin(softDeletePlugin);
+export const JobSchema =
+  SchemaFactory.createForClass(Job).plugin(softDeletePlugin);

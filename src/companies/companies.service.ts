@@ -26,6 +26,14 @@ export class CompaniesService {
     }
     return transformedObj;
   }
+
+  async getCompanyById(id: string) {
+    return {
+      message: 'Get comppany by id: ' + id + ' is success',
+      result: await this.companyModel.findById(id).exec(),
+    };
+  }
+
   async searchQuery(currentPage: number, limit: number, query: any) {
     delete query.current;
     delete query.pageSize;
@@ -60,13 +68,16 @@ export class CompaniesService {
   }
 
   async create(createCompanyDto: CreateCompanyDto, user: UserInterface) {
-    return await this.companyModel.create({
-      ...createCompanyDto,
-      createdBy: {
-        _id: user._id,
-        email: user.email,
-      },
-    });
+    return {
+      message: 'Create comppany is success',
+      result: await this.companyModel.create({
+        ...createCompanyDto,
+        createdBy: {
+          _id: user._id,
+          email: user.email,
+        },
+      }),
+    };
   }
   async update(
     updateCompanyDto: UpdateCompanyDto,
@@ -74,13 +85,16 @@ export class CompaniesService {
     user: UserInterface,
   ) {
     const filter = { _id: id };
-    return await this.companyModel.updateOne(filter, {
-      ...updateCompanyDto,
-      updateBy: {
-        _id: user._id,
-        email: user.email,
-      },
-    });
+    return {
+      message: `Update company by id ${user._id} is success`,
+      result: await this.companyModel.updateOne(filter, {
+        ...updateCompanyDto,
+        updateBy: {
+          _id: user._id,
+          email: user.email,
+        },
+      }),
+    };
   }
 
   async delete(id: string, user: UserInterface) {
@@ -91,6 +105,9 @@ export class CompaniesService {
         email: user.email,
       },
     });
-    return await this.companyModel.softDelete(filter);
+    return {
+      message: `Delete company by id ${user._id} is success`,
+      result: await this.companyModel.softDelete(filter),
+    };
   }
 }

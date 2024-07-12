@@ -5,4 +5,5 @@ export class UpdateCompanyDto extends PickType(CreateCompanyDto, [
   'name',
   'address',
   'description',
+  'logo',
 ]) {}

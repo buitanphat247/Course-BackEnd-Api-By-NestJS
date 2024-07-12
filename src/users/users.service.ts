@@ -93,6 +93,7 @@ export class UsersService {
       ...registerUserDto,
       password: this.getHashPassword(registerUserDto.password),
       role: 'USER',
+      refreshToken: null,
     });
     return {
       message: 'Register user is success',
