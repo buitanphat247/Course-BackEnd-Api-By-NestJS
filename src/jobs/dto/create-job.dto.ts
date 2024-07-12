@@ -28,7 +28,9 @@ export class CreateJobDto {
   @IsNotEmpty()
   description: string;
   @IsNotEmpty()
-  startDate: string;
+  startDate: Date;
   @IsNotEmpty()
-  endDate: string;
+  endDate: Date;
+  @IsNotEmpty()
+  location: string;
 }

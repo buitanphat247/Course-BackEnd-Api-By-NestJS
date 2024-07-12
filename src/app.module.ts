@@ -6,8 +6,8 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { CompaniesModule } from './companies/companies.module';
-import { JobModule } from './job/job.module';
 import { FilesModule } from './files/files.module';
+import { JobModule } from './jobs/job.module';
 
 @Module({
   imports: [

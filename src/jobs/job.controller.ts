@@ -14,7 +14,7 @@ import { UpdateJobDto } from './dto/update-job.dto';
 import { Public, ResponseMessage, User } from 'src/decorator/customize';
 import { UserInterface } from 'src/users/users.interface';
 
-@Controller('job')
+@Controller('jobs')
 export class JobController {
   constructor(private readonly jobService: JobService) {}
 

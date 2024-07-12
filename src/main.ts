@@ -13,17 +13,15 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   app.use(cookieParser());
   app.useGlobalGuards(new JwtAuthGuard(reflector));
-  app.useStaticAssets(join(__dirname, '/src/public'));
-  console.log(join(__dirname, '..', '/src/public'));
+  app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('ejs');
   app.useGlobalPipes(new ValidationPipe());
-  app.useGlobalInterceptors(new TransformInterceptor());
+  app.useGlobalInterceptors(new TransformInterceptor(reflector));
   app.enableCors({
     origin: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     preflightContinue: false,
-    optionsSuccessStatus: 204,
     credentials: true,
   });
   app.setGlobalPrefix('api');

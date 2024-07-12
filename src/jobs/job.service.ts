@@ -26,8 +26,6 @@ export class JobService {
           _id: user._id,
           email: user.email,
         },
-        startDate: this.convertToISO(createJobDto.startDate),
-        endDate: this.convertToISO(createJobDto.endDate),
       }),
     };
   }
@@ -42,8 +40,6 @@ export class JobService {
             _id: user._id,
             email: user.email,
           },
-          startDate: this.convertToISO(updateJobDto.startDate),
-          endDate: this.convertToISO(updateJobDto.endDate),
         },
       ),
     };

@@ -5,7 +5,7 @@ import {
   UploadedFile,
 } from '@nestjs/common';
 import { FilesService } from './files.service';
-import { Public } from 'src/decorator/customize';
+import { NoTransform, Public } from 'src/decorator/customize';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('files')
@@ -14,12 +14,14 @@ export class FilesController {
 
   @Public()
   @Post('upload')
-  @UseInterceptors(FileInterceptor('file'))
+  @NoTransform()
+  @UseInterceptors(FileInterceptor('fileUpload'))
   uploadFile(@UploadedFile() file: Express.Multer.File) {
-    console.log('file: ', file);
     return {
-      message: 'File upload is success',
-      result: file,
+      message: 'Upload file is success',
+      data: {
+        fileName: file.filename,
+      },
     };
   }
 }

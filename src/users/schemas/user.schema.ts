@@ -8,50 +8,50 @@ export type UserDocument = HydratedDocument<User>;
 @Schema({ timestamps: true })
 export class User {
   @Prop()
-  name?: string;
+  name: string;
   @Prop()
-  email?: string;
+  email: string;
   @Prop()
-  password?: string;
+  password: string;
   @Prop()
-  age?: string;
+  age: string;
   @Prop()
-  gender?: string;
+  gender: string;
   @Prop()
-  address?: string;
+  address: string;
   @Prop({ type: Object })
-  company?: {
+  company: {
     _id: mongoose.Schema.Types.ObjectId;
     name: string;
     address: string;
   };
   @Prop()
-  role?: string;
+  role: string;
   @Prop()
-  refreshToken?: string;
+  refreshToken: string;
   //***************************/
   @Prop()
-  createdAt?: Date;
+  createdAt: Date;
   @Prop()
-  updatedAt?: Date;
+  updatedAt: Date;
   @Prop()
-  deletedAt?: Date;
+  deletedAt: Date;
   //***************************/
   @Prop()
-  isDeleted?: boolean;
+  isDeleted: boolean;
   //***************************/
   @Prop({ type: Object })
-  createdBy?: {
+  createdBy: {
     _id: mongoose.Schema.Types.ObjectId;
     email: string;
   };
   @Prop({ type: Object })
-  updatedBy?: {
+  updatedBy: {
     _id: mongoose.Schema.Types.ObjectId;
     email: string;
   };
   @Prop({ type: Object })
-  deletedBy?: {
+  deletedBy: {
     _id: mongoose.Schema.Types.ObjectId;
     email: string;
   };

@@ -8,7 +8,7 @@ export type JobDocument = HydratedDocument<Job>;
 @Schema({ timestamps: true })
 export class Job {
   @Prop()
-  name?: string;
+  name: string;
   @Prop({ type: [String] })
   skills: string[];
   @Prop({ type: Object })
