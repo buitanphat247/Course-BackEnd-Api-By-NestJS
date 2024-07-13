@@ -8,16 +8,6 @@ import {
 } from 'class-validator';
 import mongoose from 'mongoose';
 
-export class History {
-  @IsNotEmpty()
-  status: string;
-  updatedAt: Date;
-  updateBy: {
-    _id: string;
-    email: string;
-  };
-}
-
 export class CreateResumeDto {
   @IsNotEmpty()
   companyId: mongoose.Schema.Types.ObjectId;

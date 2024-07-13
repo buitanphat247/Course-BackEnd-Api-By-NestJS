@@ -9,7 +9,7 @@ export type JobDocument = HydratedDocument<Job>;
 export class Job {
   @Prop()
   name: string;
-  @Prop({ type: [String] })
+  @Prop()
   skills: string[];
   @Prop({ type: Object })
   company: {
@@ -33,29 +33,29 @@ export class Job {
   endDate: Date;
   //***************************/
   @Prop()
-  createdAt?: Date;
+  createdAt: Date;
   @Prop()
-  updatedAt?: Date;
+  updatedAt: Date;
   @Prop()
-  deletedAt?: Date;
+  deletedAt: Date;
   //***************************/
   @Prop()
-  isDeleted?: boolean;
+  isDeleted: boolean;
   @Prop()
-  isActive?: boolean;
+  isActive: boolean;
   //***************************/
   @Prop({ type: Object })
-  createdBy?: {
+  createdBy: {
     _id: mongoose.Schema.Types.ObjectId;
     email: string;
   };
   @Prop({ type: Object })
-  updatedBy?: {
+  updatedBy: {
     _id: mongoose.Schema.Types.ObjectId;
     email: string;
   };
   @Prop({ type: Object })
-  deletedBy?: {
+  deletedBy: {
     _id: mongoose.Schema.Types.ObjectId;
     email: string;
   };

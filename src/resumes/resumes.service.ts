@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateResumeDto } from './dto/create-resume.dto';
 import { UpdateResumeDto } from './dto/update-resume.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Resumes, ResumesDocument } from './schema/resume.schema';
+import { Resume, ResumeDocument } from './schema/resume.schema';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import aqp from 'api-query-params';
 import { UserInterface } from 'src/users/users.interface';
@@ -10,8 +10,8 @@ import { UserInterface } from 'src/users/users.interface';
 @Injectable()
 export class ResumesService {
   constructor(
-    @InjectModel(Resumes.name)
-    private resumesModel: SoftDeleteModel<ResumesDocument>,
+    @InjectModel(Resume.name)
+    private resumesModel: SoftDeleteModel<ResumeDocument>,
   ) {}
   async create(createResumeDto: CreateResumeDto, user: UserInterface) {
     return {

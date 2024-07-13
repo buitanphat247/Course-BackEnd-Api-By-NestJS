@@ -2,19 +2,24 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
 
-export type CompanyDocument = HydratedDocument<Company>;
-// export type CompanyDocument = Company & Document;
+export type RoleDocument = HydratedDocument<Role>;
+// export type RoleDocument = Role & Document;
 
 @Schema({ timestamps: true })
-export class Company {
+export class Role {
   @Prop()
   name: string;
   @Prop()
-  address: string;
+  apiPath: string;
   @Prop()
-  description: string;
+  method: string;
   @Prop()
-  logo: string;
+  module: string;
+  @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: 'Permission' }])
+  permission: {
+    _id: mongoose.Schema.Types.ObjectId;
+    name: string;
+  }[];
   //***************************/
   @Prop()
   createdAt: Date;
@@ -25,6 +30,8 @@ export class Company {
   //***************************/
   @Prop()
   isDeleted: boolean;
+  @Prop()
+  isActive: boolean;
   //***************************/
   @Prop({ type: Object })
   createdBy: {
@@ -43,5 +50,5 @@ export class Company {
   };
 }
 
-export const CompanySchema =
-  SchemaFactory.createForClass(Company).plugin(softDeletePlugin);
+export const RoleSchema =
+  SchemaFactory.createForClass(Role).plugin(softDeletePlugin);

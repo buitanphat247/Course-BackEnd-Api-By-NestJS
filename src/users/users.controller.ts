@@ -21,11 +21,7 @@ export class UsersController {
   @ResponseMessage('Get user by id')
   @Get(':id')
   async getUserById(@Param('id') id: string) {
-    const result = await this.usersService.getUserById(id);
-    return {
-      message: 'Get user by id: ' + id + ' is success',
-      result,
-    };
+    return await this.usersService.getUserById(id);
   }
 
   @Get()

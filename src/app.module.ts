@@ -11,6 +11,7 @@ import { JobModule } from './jobs/job.module';
 import { ResumesModule } from './resumes/resumes.module';
 import { PermissionsModule } from './permissions/permissions.module';
 import { RolesModule } from './roles/roles.module';
+import { NestApplication } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -35,5 +36,6 @@ import { RolesModule } from './roles/roles.module';
   ],
   controllers: [AppController],
   providers: [AppService],
+  exports: [AppService],
 })
 export class AppModule {}

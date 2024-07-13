@@ -23,7 +23,7 @@ export class UsersService {
 
   async getUserById(id: string) {
     return {
-      message: 'Get infor account is success',
+      message: `Get user by id ${id} is success`,
       result: await this.userModel.findById(id).exec(),
     };
   }
@@ -131,7 +131,7 @@ export class UsersService {
       },
     );
     return {
-      message: 'Delete a user is success',
+      message: `Delete user by id ${id} is succcess`,
       result: await this.userModel.softDelete({ _id: id }),
     };
   }

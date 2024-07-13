@@ -1,5 +1,11 @@
 import { Transform, Type } from 'class-transformer';
-import { IsString, IsInt, IsNotEmpty, ValidateNested } from 'class-validator';
+import {
+  IsString,
+  IsInt,
+  IsNotEmpty,
+  ValidateNested,
+  IsNotEmptyObject,
+} from 'class-validator';
 import mongoose from 'mongoose';
 
 class companyDto {
@@ -15,8 +21,8 @@ export class CreateJobDto {
   @IsNotEmpty()
   name?: string;
   @IsNotEmpty()
-  @IsString({ each: true })
   skills: string[];
+  @ValidateNested({ each: true })
   @Type(() => companyDto)
   company: companyDto;
   @IsNotEmpty()

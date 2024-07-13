@@ -1,16 +1,14 @@
-export class Resume {}
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
 import { IsArray, ValidateNested } from 'class-validator';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
-import { History } from '../dto/create-resume.dto';
 
-export type ResumesDocument = HydratedDocument<Resumes>;
+export type ResumeDocument = HydratedDocument<Resume>;
 // export type UserDocument = User & Document;
 
 @Schema({ timestamps: true })
-export class Resumes {
+export class Resume {
   @Prop()
   email: string;
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
@@ -62,5 +60,5 @@ export class Resumes {
   };
 }
 
-export const ResumesSchema =
-  SchemaFactory.createForClass(Resumes).plugin(softDeletePlugin);
+export const ResumeSchema =
+  SchemaFactory.createForClass(Resume).plugin(softDeletePlugin);
