@@ -105,16 +105,19 @@ export class UsersService {
   }
 
   async update(updateUserDto: UpdateUserDto, user: UserInterface, id: string) {
-    return await this.userModel.findOneAndUpdate(
-      { _id: id },
-      {
-        ...updateUserDto,
-        updatedBy: {
-          _id: user._id,
-          email: user.email,
+    return {
+      message: `Update date user by id ${id} iss success`,
+      result: await this.userModel.findOneAndUpdate(
+        { _id: id },
+        {
+          ...updateUserDto,
+          updatedBy: {
+            _id: user._id,
+            email: user.email,
+          },
         },
-      },
-    );
+      ),
+    };
   }
 
   async delete(id: string, user: UserInterface) {
@@ -127,7 +130,10 @@ export class UsersService {
         },
       },
     );
-    return await this.userModel.softDelete({ _id: id });
+    return {
+      message: 'Delete a user is success',
+      result: await this.userModel.softDelete({ _id: id }),
+    };
   }
 
   async findOneByUsername(username: string) {

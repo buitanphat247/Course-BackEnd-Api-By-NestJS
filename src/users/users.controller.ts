@@ -55,20 +55,12 @@ export class UsersController {
     @User() user: UserInterface,
     @Param('id') id: string,
   ) {
-    const result = await this.usersService.update(updateUserDto, user, id);
-    return {
-      message: 'Update a user is success',
-      result,
-    };
+    return await this.usersService.update(updateUserDto, user, id);
   }
 
   @ResponseMessage('Delete a user')
   @Delete(':id')
   async delete(@Param('id') id: string, @User() user: UserInterface) {
-    const result = await this.usersService.delete(id, user);
-    return {
-      message: 'Delete a user is success',
-      result,
-    };
+    return await this.usersService.delete(id, user);
   }
 }
