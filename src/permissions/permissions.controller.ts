@@ -3,7 +3,7 @@ import { PermissionsService } from './permissions.service';
 import { CreatePermissionDto } from './dto/create-permission.dto';
 import { UpdatePermissionDto } from './dto/update-permission.dto';
 import { ResponseMessage, User } from 'src/decorator/customize';
-import { IUser } from 'src/users/users.interface';
+import { UserInterface } from 'src/users/users.interface';
 
 @Controller('permissions')
 export class PermissionsController {
@@ -11,7 +11,7 @@ export class PermissionsController {
 
   @Post()
   @ResponseMessage("Create a new Permission")
-  create(@Body() createPermissionDto: CreatePermissionDto, @User() user: IUser) {
+  create(@Body() createPermissionDto: CreatePermissionDto, @User() user: UserInterface) {
     return this.permissionsService.create(createPermissionDto, user);
   }
 
@@ -33,13 +33,13 @@ export class PermissionsController {
 
   @Patch(':id')
   @ResponseMessage("Update a Permission by id")
-  update(@Param('id') id: string, @Body() updatePermissionDto: UpdatePermissionDto, @User() user: IUser) {
+  update(@Param('id') id: string, @Body() updatePermissionDto: UpdatePermissionDto, @User() user: UserInterface) {
     return this.permissionsService.update(id, updatePermissionDto, user);
   }
 
   @Delete(':id')
   @ResponseMessage("Delete a Permission by id")
-  remove(@Param('id') id: string, @User() user: IUser) {
+  remove(@Param('id') id: string, @User() user: UserInterface) {
     return this.permissionsService.remove(id, user);
   }
 }

@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreatePermissionDto } from './dto/create-permission.dto';
 import { UpdatePermissionDto } from './dto/update-permission.dto';
-import { IUser } from 'src/users/users.interface';
+import { UserInterface } from 'src/users/users.interface';
 import { InjectModel } from '@nestjs/mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { Permission, PermissionDocument } from './schemas/permission.schema';
@@ -15,7 +15,7 @@ export class PermissionsService {
     private permissionModel: SoftDeleteModel<PermissionDocument>
   ) { }
 
-  async create(createPermissionDto: CreatePermissionDto, user: IUser) {
+  async create(createPermissionDto: CreatePermissionDto, user: UserInterface) {
     const { name, apiPath, method, module } = createPermissionDto;
 
     const isExist = await this.permissionModel.findOne({ apiPath, method });
@@ -76,7 +76,7 @@ export class PermissionsService {
     return await this.permissionModel.findById(id);
   }
 
-  async update(_id: string, updatePermissionDto: UpdatePermissionDto, user: IUser) {
+  async update(_id: string, updatePermissionDto: UpdatePermissionDto, user: UserInterface) {
     if (!mongoose.Types.ObjectId.isValid(_id)) {
       throw new BadRequestException("not found permission")
     }
@@ -94,7 +94,7 @@ export class PermissionsService {
     return updated;
   }
 
-  async remove(id: string, user: IUser) {
+  async remove(id: string, user: UserInterface) {
     await this.permissionModel.updateOne(
       { _id: id },
       {

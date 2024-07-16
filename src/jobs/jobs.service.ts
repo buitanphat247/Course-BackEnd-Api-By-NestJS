@@ -4,7 +4,7 @@ import { UpdateJobDto } from './dto/update-job.dto';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { JobDocument, Job } from './schemas/job.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { IUser } from 'src/users/users.interface';
+import { UserInterface } from 'src/users/users.interface';
 import mongoose from 'mongoose';
 import aqp from 'api-query-params';
 
@@ -15,7 +15,7 @@ export class JobsService {
     private jobModel: SoftDeleteModel<JobDocument>
   ) { }
 
-  async create(createJobDto: CreateJobDto, user: IUser) {
+  async create(createJobDto: CreateJobDto, user: UserInterface) {
     const {
       name, skills, company, salary, quantity,
       level, description, startDate, endDate,
@@ -75,7 +75,7 @@ export class JobsService {
     return await this.jobModel.findById(id);
   }
 
-  async update(_id: string, updateJobDto: UpdateJobDto, user: IUser) {
+  async update(_id: string, updateJobDto: UpdateJobDto, user: UserInterface) {
     const updated = await this.jobModel.updateOne(
       { _id },
       {
@@ -88,7 +88,7 @@ export class JobsService {
     return updated;
   }
 
-  async remove(_id: string, user: IUser) {
+  async remove(_id: string, user: UserInterface) {
     if (!mongoose.Types.ObjectId.isValid(_id))
       return `not found job`;
 

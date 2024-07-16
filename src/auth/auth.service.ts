@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { IUser } from 'src/users/users.interface';
+import { UserInterface } from 'src/users/users.interface';
 import { RegisterUserDto } from 'src/users/dto/create-user.dto';
 import { ConfigService } from '@nestjs/config';
 import ms from 'ms';
@@ -38,7 +38,7 @@ export class AuthService {
     return null;
   }
 
-  async login(user: IUser, response: Response) {
+  async login(user: UserInterface, response: Response) {
     const { _id, name, email, role, permissions } = user;
     const payload = {
       sub: 'token login',
@@ -146,7 +146,7 @@ export class AuthService {
     }
   };
 
-  logout = async (response: Response, user: IUser) => {
+  logout = async (response: Response, user: UserInterface) => {
     await this.usersService.updateUserToken('', user._id);
     response.clearCookie('refresh_token');
     return 'ok';

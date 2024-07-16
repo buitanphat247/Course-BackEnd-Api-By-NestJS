@@ -12,7 +12,7 @@ import { RolesService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { ResponseMessage, User } from 'src/decorator/customize';
-import { IUser } from 'src/users/users.interface';
+import { UserInterface } from 'src/users/users.interface';
 
 @Controller('roles')
 export class RolesController {
@@ -20,7 +20,7 @@ export class RolesController {
 
   @Post()
   @ResponseMessage('Create a new role')
-  create(@Body() createRoleDto: CreateRoleDto, @User() user: IUser) {
+  create(@Body() createRoleDto: CreateRoleDto, @User() user: UserInterface) {
     return this.rolesService.create(createRoleDto, user);
   }
 
@@ -45,14 +45,14 @@ export class RolesController {
   update(
     @Param('id') id: string,
     @Body() updateRoleDto: UpdateRoleDto,
-    @User() user: IUser,
+    @User() user: UserInterface,
   ) {
     return this.rolesService.update(id, updateRoleDto, user);
   }
 
   @Delete(':id')
   @ResponseMessage('Delete a Role')
-  remove(@Param('id') id: string, @User() user: IUser) {
+  remove(@Param('id') id: string, @User() user: UserInterface) {
     return this.rolesService.remove(id, user);
   }
 }

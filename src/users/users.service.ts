@@ -6,7 +6,7 @@ import { User as UserM, UserDocument } from './schemas/user.schema';
 import mongoose, { Model } from 'mongoose';
 import { genSaltSync, hashSync, compareSync } from 'bcryptjs';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
-import { IUser } from './users.interface';
+import { UserInterface } from './users.interface';
 import { User } from 'src/decorator/customize';
 import aqp from 'api-query-params';
 import { USER_ROLE } from 'src/databases/sample';
@@ -30,7 +30,7 @@ export class UsersService {
     return hash;
   }
 
-  async create(createUserDto: CreateUserDto, @User() user: IUser) {
+  async create(createUserDto: CreateUserDto, @User() user: UserInterface) {
     const {
       name, email, password, age,
       gender, address, role, company
@@ -142,7 +142,7 @@ export class UsersService {
     return compareSync(password, hash);
   }
 
-  async update(updateUserDto: UpdateUserDto, user: IUser) {
+  async update(updateUserDto: UpdateUserDto, user: UserInterface) {
 
     const updated = await this.userModel.updateOne(
       { _id: updateUserDto._id },
@@ -156,7 +156,7 @@ export class UsersService {
     return updated;
   }
 
-  async remove(id: string, user: IUser) {
+  async remove(id: string, user: UserInterface) {
 
     if (!mongoose.Types.ObjectId.isValid(id))
       return `not found user`;

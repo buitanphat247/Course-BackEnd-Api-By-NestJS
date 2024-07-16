@@ -8,7 +8,7 @@ import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { request } from 'http';
-import { IS_PUBLIC_KEY } from 'src/decorator/customize';
+import { IS_PUBLIC_KEY, IS_PUBLIC_PERMISSION } from 'src/decorator/customize';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -38,18 +38,26 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         )
       );
     }
+
     // check permission
-    // const targetMethod = request.method;
-    // const targetEndpoint = request?.route?.path;
-    // const permissions = user?.permissions ?? [];
-    // const isExist = permissions.find(
-    //   (permission) =>
-    //     targetMethod === permission.method &&
-    //     targetEndpoint === permission.apiPath,
-    // );
-    // if (!isExist) {
-    //   throw new ForbiddenException('Bạn không có quyền truy cập endpoint này');
-    // }
+
+    const isSkipPermission = this.reflector.getAllAndOverride<boolean>(
+      IS_PUBLIC_PERMISSION,
+      [context.getHandler(), context.getClass()],
+    );
+    
+    const targetMethod = request.method;
+    const targetEndpoint = request?.route?.path;
+    const permissions = user?.permissions ?? [];
+    let isExist = permissions.find(
+      (permission) =>
+        targetMethod === permission.method &&
+        targetEndpoint === permission.apiPath,
+    );
+    targetEndpoint.startsWith('/api/v1/auth') && (isExist = true);
+    if (!isExist && !isSkipPermission) {
+      throw new ForbiddenException('Bạn không có quyền truy cập endpoint này');
+    }
     return user;
   }
 }

@@ -12,7 +12,7 @@ import { JobsService } from './jobs.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { Public, ResponseMessage, User } from 'src/decorator/customize';
-import { IUser } from 'src/users/users.interface';
+import { UserInterface } from 'src/users/users.interface';
 
 @Controller('jobs')
 export class JobsController {
@@ -20,7 +20,7 @@ export class JobsController {
 
   @Post()
   @ResponseMessage('Create a new job')
-  create(@Body() createJobDto: CreateJobDto, @User() user: IUser) {
+  create(@Body() createJobDto: CreateJobDto, @User() user: UserInterface) {
     return this.jobsService.create(createJobDto, user);
   }
 
@@ -47,14 +47,14 @@ export class JobsController {
   update(
     @Param('id') id: string,
     @Body() updateJobDto: UpdateJobDto,
-    @User() user: IUser,
+    @User() user: UserInterface,
   ) {
     return this.jobsService.update(id, updateJobDto, user);
   }
 
   @Delete(':id')
   @ResponseMessage('Delete a Job by id')
-  remove(@Param('id') id: string, @User() user: IUser) {
+  remove(@Param('id') id: string, @User() user: UserInterface) {
     return this.jobsService.remove(id, user);
   }
 }

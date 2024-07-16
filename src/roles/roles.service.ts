@@ -4,7 +4,7 @@ import { UpdateRoleDto } from './dto/update-role.dto';
 import { Role, RoleDocument } from './schemas/role.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
-import { IUser } from 'src/users/users.interface';
+import { UserInterface } from 'src/users/users.interface';
 import aqp from 'api-query-params';
 import mongoose from 'mongoose';
 import { ADMIN_ROLE } from 'src/databases/sample';
@@ -16,7 +16,7 @@ export class RolesService {
     private roleModel: SoftDeleteModel<RoleDocument>
   ) { }
 
-  async create(createRoleDto: CreateRoleDto, user: IUser) {
+  async create(createRoleDto: CreateRoleDto, user: UserInterface) {
     const { name, description, isActive, permissions } = createRoleDto;
 
     const isExist = await this.roleModel.findOne({ name });
@@ -80,7 +80,7 @@ export class RolesService {
     });
   }
 
-  async update(_id: string, updateRoleDto: UpdateRoleDto, user: IUser) {
+  async update(_id: string, updateRoleDto: UpdateRoleDto, user: UserInterface) {
     if (!mongoose.Types.ObjectId.isValid(_id)) {
       throw new BadRequestException("not found role")
     }
@@ -105,7 +105,7 @@ export class RolesService {
     return updated;
   }
 
-  async remove(id: string, user: IUser) {
+  async remove(id: string, user: UserInterface) {
     const foundRole = await this.roleModel.findById(id);
     if (foundRole.name === ADMIN_ROLE) {
       throw new BadRequestException("Không thể xóa role ADMIN");

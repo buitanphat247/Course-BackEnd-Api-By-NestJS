@@ -4,7 +4,7 @@ import { UpdateCompanyDto } from './dto/update-company.dto';
 import { Company, CompanyDocument } from './schemas/company.schema';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { IUser } from 'src/users/users.interface';
+import { UserInterface } from 'src/users/users.interface';
 import aqp from 'api-query-params';
 import mongoose from 'mongoose';
 
@@ -17,7 +17,7 @@ export class CompaniesService {
   ) { }
 
 
-  create(createCompanyDto: CreateCompanyDto, user: IUser) {
+  create(createCompanyDto: CreateCompanyDto, user: UserInterface) {
     return this.companyModel.create({
       ...createCompanyDto,
       createdBy: {
@@ -68,7 +68,7 @@ export class CompaniesService {
     return await this.companyModel.findById(id);
   }
 
-  async update(id: string, updateCompanyDto: UpdateCompanyDto, user: IUser) {
+  async update(id: string, updateCompanyDto: UpdateCompanyDto, user: UserInterface) {
     return await this.companyModel.updateOne(
       { _id: id },
       {
@@ -82,7 +82,7 @@ export class CompaniesService {
 
   }
 
-  async remove(id: string, user: IUser) {
+  async remove(id: string, user: UserInterface) {
     await this.companyModel.updateOne(
       { _id: id },
       {

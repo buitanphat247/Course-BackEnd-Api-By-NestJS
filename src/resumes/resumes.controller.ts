@@ -12,7 +12,7 @@ import { ResumesService } from './resumes.service';
 import { CreateUserCvDto } from './dto/create-resume.dto';
 import { UpdateResumeDto } from './dto/update-resume.dto';
 import { ResponseMessage, User } from 'src/decorator/customize';
-import { IUser } from 'src/users/users.interface';
+import { UserInterface } from 'src/users/users.interface';
 
 @Controller('resumes')
 export class ResumesController {
@@ -20,13 +20,13 @@ export class ResumesController {
 
   @Post()
   @ResponseMessage('Create a new resume')
-  create(@Body() createUserCvDto: CreateUserCvDto, @User() user: IUser) {
+  create(@Body() createUserCvDto: CreateUserCvDto, @User() user: UserInterface) {
     return this.resumesService.create(createUserCvDto, user);
   }
 
   @Post('by-user')
   @ResponseMessage('Get Resumes by user')
-  getResumesByUser(@User() user: IUser) {
+  getResumesByUser(@User() user: UserInterface) {
     return this.resumesService.findByUsers(user);
   }
 
@@ -51,14 +51,14 @@ export class ResumesController {
   updateStatus(
     @Param('id') id: string,
     @Body('status') status: string,
-    @User() user: IUser,
+    @User() user: UserInterface,
   ) {
     return this.resumesService.update(id, status, user);
   }
 
   @Delete(':id')
   @ResponseMessage('Delete a Resume by id')
-  remove(@Param('id') id: string, @User() user: IUser) {
+  remove(@Param('id') id: string, @User() user: UserInterface) {
     return this.resumesService.remove(id, user);
   }
 }

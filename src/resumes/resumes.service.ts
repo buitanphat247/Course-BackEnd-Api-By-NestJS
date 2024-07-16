@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserCvDto } from './dto/create-resume.dto';
 import { UpdateResumeDto } from './dto/update-resume.dto';
-import { IUser } from 'src/users/users.interface';
+import { UserInterface } from 'src/users/users.interface';
 import { Resume, ResumeDocument } from './schemas/resume.schema';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -15,7 +15,7 @@ export class ResumesService {
     @InjectModel(Resume.name)
     private resumeModel: SoftDeleteModel<ResumeDocument>
   ) { }
-  async create(createUserCvDto: CreateUserCvDto, user: IUser) {
+  async create(createUserCvDto: CreateUserCvDto, user: UserInterface) {
     const { url, companyId, jobId } = createUserCvDto;
     const { email, _id } = user;
 
@@ -80,7 +80,7 @@ export class ResumesService {
 
     return await this.resumeModel.findById(id);
   }
-  async findByUsers(user: IUser) {
+  async findByUsers(user: UserInterface) {
     return await this.resumeModel.find({
       userId: user._id,
     })
@@ -97,7 +97,7 @@ export class ResumesService {
       ])
   }
 
-  async update(_id: string, status: string, user: IUser) {
+  async update(_id: string, status: string, user: UserInterface) {
     if (!mongoose.Types.ObjectId.isValid(_id)) {
       throw new BadRequestException("not found resume")
     }
@@ -125,7 +125,7 @@ export class ResumesService {
     return updated;
   }
 
-  async remove(id: string, user: IUser) {
+  async remove(id: string, user: UserInterface) {
     await this.resumeModel.updateOne(
       { _id: id },
       {

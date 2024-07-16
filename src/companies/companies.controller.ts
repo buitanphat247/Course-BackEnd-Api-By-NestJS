@@ -12,14 +12,14 @@ import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { Public, ResponseMessage, User } from 'src/decorator/customize';
-import { IUser } from 'src/users/users.interface';
+import { UserInterface } from 'src/users/users.interface';
 
 @Controller('companies')
 export class CompaniesController {
   constructor(private readonly companiesService: CompaniesService) {}
 
   @Post()
-  create(@Body() createCompanyDto: CreateCompanyDto, @User() user: IUser) {
+  create(@Body() createCompanyDto: CreateCompanyDto, @User() user: UserInterface) {
     return this.companiesService.create(createCompanyDto, user);
   }
 
@@ -46,7 +46,7 @@ export class CompaniesController {
   update(
     @Param('id') id: string,
     @Body() updateCompanyDto: UpdateCompanyDto,
-    @User() user: IUser,
+    @User() user: UserInterface,
   ) {
     return this.companiesService.update(id, updateCompanyDto, user);
   }
@@ -55,7 +55,7 @@ export class CompaniesController {
   @ResponseMessage('Delete a Company with id')
   remove(
     @Param('id') id: string,
-    @User() user: IUser, //req.user
+    @User() user: UserInterface, //req.user
   ) {
     return this.companiesService.remove(id, user);
   }

@@ -4,7 +4,7 @@ import { Public, ResponseMessage, User } from 'src/decorator/customize';
 import { LocalAuthGuard } from './guard/local-auth.guard';
 import { RegisterUserDto } from 'src/users/dto/create-user.dto';
 import { Request, Response } from 'express';
-import { IUser } from 'src/users/users.interface';
+import { UserInterface } from 'src/users/users.interface';
 import { RolesService } from 'src/roles/roles.service';
 
 @Controller("auth")
@@ -34,7 +34,7 @@ export class AuthController {
 
     @ResponseMessage("Get user information")
     @Get('/account')
-    async handleGetAccount(@User() user: IUser) {
+    async handleGetAccount(@User() user: UserInterface) {
         const temp = await this.rolesService.findOne(user.role._id) as any;
         user.permissions = temp.permissions;
         return { user };
@@ -52,7 +52,7 @@ export class AuthController {
     @Post('/logout')
     handleLogout(
         @Res({ passthrough: true }) response: Response,
-        @User() user: IUser
+        @User() user: UserInterface
     ) {
         return this.authService.logout(response, user);
     }
