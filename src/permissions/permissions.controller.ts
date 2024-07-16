@@ -1,59 +1,45 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Get,
-  Query,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { PermissionsService } from './permissions.service';
 import { CreatePermissionDto } from './dto/create-permission.dto';
-import { UserInterface } from 'src/users/users.interface';
-import { ResponseMessage, User } from 'src/decorator/customize';
-import expressListEndpoints from 'express-list-endpoints';
 import { UpdatePermissionDto } from './dto/update-permission.dto';
+import { ResponseMessage, User } from 'src/decorator/customize';
+import { IUser } from 'src/users/users.interface';
 
 @Controller('permissions')
 export class PermissionsController {
-  constructor(private readonly permissionsService: PermissionsService) {}
+  constructor(private readonly permissionsService: PermissionsService) { }
 
   @Post()
-  create(
-    @Body() createPermissionDto: CreatePermissionDto,
-    @User() user: UserInterface,
-  ) {
+  @ResponseMessage("Create a new Permission")
+  create(@Body() createPermissionDto: CreatePermissionDto, @User() user: IUser) {
     return this.permissionsService.create(createPermissionDto, user);
-  }
-  @Patch(':id')
-  update(
-    @Body() updatePermissionDto: UpdatePermissionDto,
-    @User() user: UserInterface,
-    @Param('id') id: string,
-  ) {
-    return this.permissionsService.update(updatePermissionDto, user, id);
   }
 
   @Get()
-  @ResponseMessage('Fetched Stats Succesfully')
-  async getPermissionWithPaginate(
-    @Query('current') currentPage: number,
-    @Query('pageSize') limit: number,
-    @Query() query: any,
+  @ResponseMessage("Fetch list Permissions with paginate")
+  findAll(
+    @Query("current") currentPage: string,
+    @Query("pageSize") limit: string,
+    @Query() qs: string
   ) {
-    return await this.permissionsService.searchQuery(currentPage, limit, query);
+    return this.permissionsService.findAll(+currentPage, +limit, qs);
   }
 
-  @ResponseMessage('Get permission by id')
   @Get(':id')
-  async getPermissionById(@Param('id') id: string) {
-    return await this.permissionsService.getPermissionById(id);
+  @ResponseMessage("Fetch a Permission by id")
+  findOne(@Param('id') id: string) {
+    return this.permissionsService.findOne(id);
   }
 
-  @ResponseMessage('Delete a permission')
+  @Patch(':id')
+  @ResponseMessage("Update a Permission by id")
+  update(@Param('id') id: string, @Body() updatePermissionDto: UpdatePermissionDto, @User() user: IUser) {
+    return this.permissionsService.update(id, updatePermissionDto, user);
+  }
+
   @Delete(':id')
-  async delete(@Param('id') id: string, @User() user: UserInterface) {
-    return await this.permissionsService.delete(id, user);
+  @ResponseMessage("Delete a Permission by id")
+  remove(@Param('id') id: string, @User() user: IUser) {
+    return this.permissionsService.remove(id, user);
   }
 }

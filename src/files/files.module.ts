@@ -11,6 +11,5 @@ import { MulterConfigService } from './multer.config';
     }),
   ],
   controllers: [FilesController],
-  providers: [FilesService],
 })
 export class FilesModule {}

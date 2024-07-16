@@ -5,16 +5,12 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "node",
-      "request": "launch",
-      "name": "Nest Debug",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "start:debug", "--", "--inspect-brk"],
-      "console": "integratedTerminal",
-      "restart": true,
-      "protocol": "auto",
+      "name": "Attach",
       "port": 9229,
-      "autoAttachChildProcesses": true
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node",
+      "restart": true
     }
   ]
 }

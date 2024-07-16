@@ -1,7 +1,15 @@
-import { Controller, Get, Request } from '@nestjs/common';
+import { Controller, Post, UseGuards, Request, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth/auth.service';
 
-@Controller()
-export class AppController {}
+@Controller() //  route /
+export class AppController {
+  constructor(
+    private readonly appService: AppService,
+    private configService: ConfigService,
+    private authService: AuthService
+
+  ) { }
+
+}

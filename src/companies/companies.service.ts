@@ -1,113 +1,98 @@
-import { Injectable } from '@nestjs/common';
-import { UpdateCompanyDto } from './dto/update-company.dto';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCompanyDto } from './dto/create-company.dto';
-import { InjectModel } from '@nestjs/mongoose';
+import { UpdateCompanyDto } from './dto/update-company.dto';
 import { Company, CompanyDocument } from './schemas/company.schema';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
-import { UserInterface } from 'src/users/users.interface';
+import { InjectModel } from '@nestjs/mongoose';
+import { IUser } from 'src/users/users.interface';
 import aqp from 'api-query-params';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class CompaniesService {
+
   constructor(
     @InjectModel(Company.name)
-    private companyModel: SoftDeleteModel<CompanyDocument>,
-  ) {}
-  objectSlugToNormal(obj: any): any {
-    const transformedObj: any = {};
-    for (const key in obj) {
-      if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        if (typeof obj[key] === 'string') {
-          transformedObj[key] = obj[key].replace(/[_-]/g, ' ');
-        } else {
-          transformedObj[key] = obj[key];
-        }
+    private companyModel: SoftDeleteModel<CompanyDocument>
+  ) { }
+
+
+  create(createCompanyDto: CreateCompanyDto, user: IUser) {
+    return this.companyModel.create({
+      ...createCompanyDto,
+      createdBy: {
+        _id: user._id,
+        email: user.email
       }
-    }
-    return transformedObj;
+    })
   }
 
-  async getCompanyById(id: string) {
-    return {
-      message: 'Get comppany by id: ' + id + ' is success',
-      result: await this.companyModel.findById(id).exec(),
-    };
-  }
+  async findAll(currentPage: number, limit: number, qs: string) {
+    const { filter, sort, population } = aqp(qs);
+    delete filter.current;
+    delete filter.pageSize;
 
-  async searchQuery(currentPage: number, limit: number, query: any) {
-    delete query.current;
-    delete query.pageSize;
-    const {
-      filter,
-      sort,
-      projection,
-      population,
-    }: { filter: any; sort: any; projection: any; population: any } =
-      aqp(query);
-    const result_all = await this.companyModel.find(filter);
-    const result_query = await this.companyModel
-      .find(filter)
-      .limit(limit)
-      .skip((currentPage - 1) * limit)
-      .sort(sort)
-      .select(projection)
+    let offset = (+currentPage - 1) * (+limit);
+    let defaultLimit = +limit ? +limit : 10;
+
+    const totalItems = (await this.companyModel.find(filter)).length;
+    const totalPages = Math.ceil(totalItems / defaultLimit);
+
+
+    const result = await this.companyModel.find(filter)
+      .skip(offset)
+      .limit(defaultLimit)
+      .sort(sort as any)
       .populate(population)
       .exec();
+
+
     return {
-      message: 'Get comppany is success',
-      result: {
-        meta: {
-          current: currentPage,
-          limit: limit,
-          totalPages: Math.ceil(result_all.length / limit),
-          totalItems: result_query.length,
-        },
-        result: result_query,
+      meta: {
+        current: currentPage, //trang hiện tại
+        pageSize: limit, //số lượng bản ghi đã lấy
+        pages: totalPages,  //tổng số trang với điều kiện query
+        total: totalItems // tổng số phần tử (số bản ghi)
       },
-    };
+      result //kết quả query
+    }
+
+
   }
 
-  async create(createCompanyDto: CreateCompanyDto, user: UserInterface) {
-    return {
-      message: 'Create comppany is success',
-      result: await this.companyModel.create({
-        ...createCompanyDto,
-        createdBy: {
-          _id: user._id,
-          email: user.email,
-        },
-      }),
-    };
+  async findOne(id: string) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new BadRequestException(`not found company with id=${id}`)
+    }
+
+    return await this.companyModel.findById(id);
   }
-  async update(
-    updateCompanyDto: UpdateCompanyDto,
-    id: string,
-    user: UserInterface,
-  ) {
-    const filter = { _id: id };
-    return {
-      message: `Update company by id ${user._id} is success`,
-      result: await this.companyModel.updateOne(filter, {
+
+  async update(id: string, updateCompanyDto: UpdateCompanyDto, user: IUser) {
+    return await this.companyModel.updateOne(
+      { _id: id },
+      {
         ...updateCompanyDto,
-        updateBy: {
+        updatedBy: {
           _id: user._id,
-          email: user.email,
-        },
-      }),
-    };
+          email: user.email
+        }
+      }
+    )
+
   }
 
-  async delete(id: string, user: UserInterface) {
-    const filter = { _id: id };
-    await this.companyModel.updateOne(filter, {
-      deleteBy: {
-        _id: user._id,
-        email: user.email,
-      },
-    });
-    return {
-      message: `Delete company by id ${user._id} is success`,
-      result: await this.companyModel.softDelete(filter),
-    };
+  async remove(id: string, user: IUser) {
+    await this.companyModel.updateOne(
+      { _id: id },
+      {
+        deletedBy: {
+          _id: user._id,
+          email: user.email
+        }
+      })
+    return this.companyModel.softDelete({
+      _id: id
+    })
   }
 }

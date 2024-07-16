@@ -1,110 +1,110 @@
-import { BadGatewayException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreatePermissionDto } from './dto/create-permission.dto';
 import { UpdatePermissionDto } from './dto/update-permission.dto';
-import { Permission, PermissionDocument } from './schema/permission.schema';
-import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
+import { IUser } from 'src/users/users.interface';
 import { InjectModel } from '@nestjs/mongoose';
-import { UserInterface } from 'src/users/users.interface';
-import { NestApplication, NestFactory } from '@nestjs/core';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import { AppModule } from 'src/app.module';
+import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
+import { Permission, PermissionDocument } from './schemas/permission.schema';
 import aqp from 'api-query-params';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class PermissionsService {
   constructor(
     @InjectModel(Permission.name)
-    private PermissionModel: SoftDeleteModel<PermissionDocument>,
-  ) {}
+    private permissionModel: SoftDeleteModel<PermissionDocument>
+  ) { }
 
-  async create(createPermissionDto: CreatePermissionDto, user: UserInterface) {
-    const { apiPath, method, module, name } = createPermissionDto;
-    const isExit = await this.PermissionModel.findOne({ apiPath, method });
-    if (isExit) {
-      throw new BadGatewayException(
-        `Permission apiPath=${apiPath} and Method=${method} already exist`,
-      );
+  async create(createPermissionDto: CreatePermissionDto, user: IUser) {
+    const { name, apiPath, method, module } = createPermissionDto;
+
+    const isExist = await this.permissionModel.findOne({ apiPath, method });
+    if (isExist) {
+      throw new BadRequestException(`Permission với apiPath=${apiPath} , method=${method} đã tồn tại!`)
     }
+
+    const newPermission = await this.permissionModel.create({
+      name, apiPath, method, module,
+      createdBy: {
+        _id: user._id,
+        email: user.email
+      }
+    })
+
     return {
-      message: 'Create permission is success',
-      result: await this.PermissionModel.create({
-        ...createPermissionDto,
-        createdBy: {
-          _id: user._id,
-          email: user.email,
-        },
-      }),
+      _id: newPermission?._id,
+      createdAt: newPermission?.createdAt
     };
   }
 
-  async searchQuery(currentPage: number, limit: number, query: any) {
-    delete query.current;
-    delete query.pageSize;
-    const {
-      filter,
-      sort,
-      projection,
-      population,
-    }: { filter: any; sort: any; projection: any; population: any } =
-      aqp(query);
-    const result_all = await this.PermissionModel.find(filter);
-    const result_query = await this.PermissionModel.find(filter)
-      .limit(limit)
-      .skip((currentPage - 1) * limit)
-      .sort(sort)
-      .select(projection)
+  async findAll(currentPage: number, limit: number, qs: string) {
+    const { filter, sort, population, projection } = aqp(qs);
+    delete filter.current;
+    delete filter.pageSize;
+
+    let offset = (+currentPage - 1) * (+limit);
+    let defaultLimit = +limit ? +limit : 10;
+
+    const totalItems = (await this.permissionModel.find(filter)).length;
+    const totalPages = Math.ceil(totalItems / defaultLimit);
+
+
+    const result = await this.permissionModel.find(filter)
+      .skip(offset)
+      .limit(defaultLimit)
+      .sort(sort as any)
       .populate(population)
+      .select(projection as any)
       .exec();
+
     return {
-      message: 'Get permission is success',
-      result: {
-        meta: {
-          current: currentPage,
-          limit: limit,
-          totalPages: Math.ceil(result_all.length / limit),
-          totalItems: result_query.length,
-        },
-        result: result_query,
+      meta: {
+        current: currentPage, //trang hiện tại
+        pageSize: limit, //số lượng bản ghi đã lấy
+        pages: totalPages,  //tổng số trang với điều kiện query
+        total: totalItems // tổng số phần tử (số bản ghi)
       },
-    };
+      result //kết quả query
+    }
   }
 
-  async update(
-    updatePermissionDto: UpdatePermissionDto,
-    user: UserInterface,
-    id: string,
-  ) {
-    return {
-      message: `Update permission by id ${id} is succcess`,
-      result: await this.PermissionModel.findOneAndUpdate(
-        { _id: id },
-        {
-          ...updatePermissionDto,
-          updatedBy: { _id: user._id, email: user.email },
-        },
-      ),
-    };
-  }
-  async getPermissionById(id: string) {
-    return {
-      message: `Get permission by id ${id} is succcess`,
-      result: await this.PermissionModel.findById(id).exec(),
-    };
+  async findOne(id: string) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new BadRequestException("not found permission")
+    }
+
+    return await this.permissionModel.findById(id);
   }
 
-  async delete(id: string, user: UserInterface) {
-    await this.PermissionModel.findOneAndUpdate(
+  async update(_id: string, updatePermissionDto: UpdatePermissionDto, user: IUser) {
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+      throw new BadRequestException("not found permission")
+    }
+    const { module, method, apiPath, name } = updatePermissionDto;
+
+    const updated = await this.permissionModel.updateOne(
+      { _id },
+      {
+        module, method, apiPath, name,
+        updatedBy: {
+          _id: user._id,
+          email: user.email
+        }
+      });
+    return updated;
+  }
+
+  async remove(id: string, user: IUser) {
+    await this.permissionModel.updateOne(
       { _id: id },
       {
         deletedBy: {
           _id: user._id,
-          email: user.email,
-        },
-      },
-    );
-    return {
-      message: `Delete permission by id ${id} is succcess`,
-      result: await this.PermissionModel.softDelete({ _id: id }),
-    };
+          email: user.email
+        }
+      })
+    return this.permissionModel.softDelete({
+      _id: id
+    })
   }
 }

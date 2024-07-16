@@ -1,41 +1,49 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
+import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
 import { CompaniesModule } from './companies/companies.module';
+import { JobsModule } from './jobs/jobs.module';
 import { FilesModule } from './files/files.module';
-import { JobModule } from './jobs/job.module';
 import { ResumesModule } from './resumes/resumes.module';
 import { PermissionsModule } from './permissions/permissions.module';
 import { RolesModule } from './roles/roles.module';
-import { NestApplication } from '@nestjs/core';
+import { DatabasesModule } from './databases/databases.module';
 
 @Module({
   imports: [
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGODB_URI'),
+        uri: configService.get<string>('MONGO_URL'),
+        connectionFactory: (connection) => {
+          connection.plugin(softDeletePlugin);
+          return connection;
+        }
+
       }),
       inject: [ConfigService],
     }),
+
     ConfigModule.forRoot({
-      isGlobal: true,
+      isGlobal: true
     }),
+
     UsersModule,
     AuthModule,
     CompaniesModule,
-    JobModule,
+    JobsModule,
     FilesModule,
     ResumesModule,
     PermissionsModule,
     RolesModule,
+    DatabasesModule
   ],
   controllers: [AppController],
   providers: [AppService],
-  exports: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

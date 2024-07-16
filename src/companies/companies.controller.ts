@@ -1,68 +1,62 @@
 import {
   Controller,
+  Get,
   Post,
   Body,
-  Req,
   Patch,
   Param,
   Delete,
-  Get,
   Query,
 } from '@nestjs/common';
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
-import { Public, ResponseMessage, User } from 'src/decorator/customize';
-import { UserInterface } from 'src/users/users.interface';
 import { UpdateCompanyDto } from './dto/update-company.dto';
+import { Public, ResponseMessage, User } from 'src/decorator/customize';
+import { IUser } from 'src/users/users.interface';
 
 @Controller('companies')
 export class CompaniesController {
   constructor(private readonly companiesService: CompaniesService) {}
 
-  @Public()
-  @ResponseMessage('Get all companies')
-  @Get()
-  get(
-    @Query('current') currentPage: number,
-    @Query('pageSize') limit: number,
-    @Query() query: any,
-  ) {
-    return this.companiesService.searchQuery(currentPage, limit, query);
-  }
-
-  @Public()
-  @ResponseMessage('Get a new company by id')
-  @Get(':id')
-  getCompanyById(
-    @Param('id') id: string,
-    @Body() createCompanyDto: CreateCompanyDto,
-    @User() user: UserInterface,
-  ) {
-    return this.companiesService.getCompanyById(id);
-  }
-
-  @ResponseMessage('Create a new company')
   @Post()
-  create(
-    @Body() createCompanyDto: CreateCompanyDto,
-    @User() user: UserInterface,
-  ) {
+  create(@Body() createCompanyDto: CreateCompanyDto, @User() user: IUser) {
     return this.companiesService.create(createCompanyDto, user);
   }
 
-  @ResponseMessage('Update a company by id')
-  @Patch(':id')
-  update(
-    @Body() updateCompanyDto: UpdateCompanyDto,
-    @Param('id') id: string,
-    @User() user: UserInterface,
+  @Get()
+  @Public()
+  @ResponseMessage('Fetch list Companies with paginate')
+  findAll(
+    @Query('current') currentPage: string,
+    @Query('pageSize') limit: string,
+    @Query() qs: string,
   ) {
-    // console.log('id: ', id);
-    return this.companiesService.update(updateCompanyDto, id, user);
+    return this.companiesService.findAll(+currentPage, +limit, qs);
   }
-  @ResponseMessage('Delete a company by id')
+
+  @Get(':id')
+  @Public()
+  @ResponseMessage('Fetch a Company with id')
+  findOne(@Param('id') id: string) {
+    return this.companiesService.findOne(id);
+  }
+
+  @Patch(':id')
+  @ResponseMessage('Update a Company with id')
+  update(
+    @Param('id') id: string,
+    @Body() updateCompanyDto: UpdateCompanyDto,
+    @User() user: IUser,
+  ) {
+    return this.companiesService.update(id, updateCompanyDto, user);
+  }
+
   @Delete(':id')
-  delete(@Param('id') id: string, @User() user: UserInterface) {
-    return this.companiesService.delete(id, user);
+  @ResponseMessage('Delete a Company with id')
+  remove(
+    @Param('id') id: string,
+    @User() user: IUser, //req.user
+  ) {
+    return this.companiesService.remove(id, user);
   }
 }

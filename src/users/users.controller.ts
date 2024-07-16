@@ -1,62 +1,51 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Get,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { ResponseMessage, User } from 'src/decorator/customize';
-import { UserInterface } from './users.interface';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Public, ResponseMessage, User } from 'src/decorator/customize';
+import { IUser } from './users.interface';
 
-@Controller('users')
+@Controller('users') // => /users
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
-  @ResponseMessage('Get user by id')
-  @Get(':id')
-  async getUserById(@Param('id') id: string) {
-    return await this.usersService.getUserById(id);
-  }
-
-  @Get()
-  @ResponseMessage('Fetched Stats Succesfully')
-  async getUserWithPaginate(
-    @Query('current') currentPage: number,
-    @Query('pageSize') limit: number,
-    @Query() query: any,
-  ) {
-    return await this.usersService.searchQuery(currentPage, limit, query);
-  }
-
-  @ResponseMessage('Register a new user')
   @Post()
-  async create(@Body() userDto: CreateUserDto, @User() user: UserInterface) {
-    const result = await this.usersService.create(userDto, user);
+  @ResponseMessage("Create a new User")
+  async create(@Body() hoidanit: CreateUserDto, @User() user: IUser) {
+    let newUser = await this.usersService.create(hoidanit, user);
     return {
-      message: 'Register a new user is success',
-      result,
+      _id: newUser?._id,
+      createdAt: newUser?.createdAt
     };
   }
 
-  @ResponseMessage('Update a user')
-  @Patch(':id')
-  async update(
-    @Body() updateUserDto: UpdateUserDto,
-    @User() user: UserInterface,
-    @Param('id') id: string,
-  ) {
-    return await this.usersService.update(updateUserDto, user, id);
+  @Get()
+  @ResponseMessage("Fetch list Users with paginate")
+  findAll(
+    @Query("current") currentPage: string,
+    @Query("pageSize") limit: string,
+    @Query() qs: string,) {
+    return this.usersService.findAll(+currentPage, +limit, qs);
   }
 
-  @ResponseMessage('Delete a user')
+  @Public()
+  @Get(':id')
+  @ResponseMessage("Fetch User by id")
+  async findOne(@Param('id') id: string) {
+    const foundUser = await this.usersService.findOne(id);
+    return foundUser;
+  }
+
+  @ResponseMessage("Update a User  by id")
+  @Patch()
+  async update(@Body() updateUserDto: UpdateUserDto, @User() user: IUser) {
+    let updatedUser = await this.usersService.update(updateUserDto, user);
+    return updatedUser;
+  }
+
   @Delete(':id')
-  async delete(@Param('id') id: string, @User() user: UserInterface) {
-    return await this.usersService.delete(id, user);
+  @ResponseMessage("Delete a User by id")
+  remove(@Param('id') id: string, @User() user: IUser) {
+    return this.usersService.remove(id, user);
   }
 }

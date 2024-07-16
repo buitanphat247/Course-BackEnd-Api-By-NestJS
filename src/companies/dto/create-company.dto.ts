@@ -1,12 +1,15 @@
-import { IsString, IsInt, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 
 export class CreateCompanyDto {
-  @IsNotEmpty()
-  name: string;
-  @IsNotEmpty()
-  address: string;
-  @IsNotEmpty()
-  description: string;
-  @IsNotEmpty()
-  logo: string;
+    @IsNotEmpty({ message: 'Name không được để trống', })
+    name: string;
+
+    @IsNotEmpty({ message: 'Address không được để trống', })
+    address: string;
+
+    @IsNotEmpty({ message: 'Description không được để trống', })
+    description: string;
+
+    @IsNotEmpty({ message: 'Logo không được để trống', })
+    logo: string;
 }
